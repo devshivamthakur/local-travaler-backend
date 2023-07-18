@@ -1,0 +1,16 @@
+
+ const PlaceListConstants = {
+   POPULAR_DESTINATION: 'POPULAR_DESTINATION',
+    TEMPLE: 'TEMPLE',
+    LAKE: 'LAKE',
+    MOUNTAIN: 'MOUNTAIN',
+    BEACH: 'BEACH',
+    FOOD_AND_RESTAURANTS: 'FOOD_AND_RESTAURANTS',
+    CAFE: 'CAFE',
+    BARS_AND_DRINKING: 'BARS_AND_DRINKING',
+
+
+
+}
+
+module.exports = PlaceListConstants;

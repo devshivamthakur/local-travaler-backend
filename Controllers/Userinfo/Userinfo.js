@@ -23,7 +23,8 @@ const Login = async (req, res) => {
     try {
         const { error } = schema.validate({ googleId, email, name });
         if (error) {
-            return res.json({
+            return res.status(400)
+            .json({
                 message: userinfoConstants.USER_DEATAILS_ERROR,
                 error: error.details[0].message
             });
@@ -39,7 +40,7 @@ const Login = async (req, res) => {
         }
 
         let newUser = await insertUser(googleId, email, name);
-        if(!newUser) return res.json({
+        if(!newUser) return res.status(400).json({
             message: userinfoConstants.USER_DEATAILS_ERROR,
             error: userinfoConstants.USER_NOT_CREATED
         });
@@ -51,7 +52,7 @@ const Login = async (req, res) => {
             user: newUser
         });
     } catch (error) {
-        res.json({
+        res.status(400).json({
             message: userinfoConstants.USER_DEATAILS_ERROR,
             error: error
         });
@@ -83,7 +84,8 @@ const insertUser = async(googleId, email, name) => {
 };
 
 const GetUserinfo = async(userid) => {
-    return Mysql.execute('SELECT * FROM userinfo WHERE id = ? ', [userid])
+    try {
+        return Mysql.execute('SELECT * FROM userinfo WHERE id = ? ', [userid])
         .then(([rows, fields]) => {
 
             return rows.length > 0 ? rows[0] : null;
@@ -91,6 +93,10 @@ const GetUserinfo = async(userid) => {
         .catch(err => {
             throw err;
         });
+    } catch (error) {
+        
+    }
+    
 
 }
 
