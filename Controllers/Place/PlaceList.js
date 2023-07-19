@@ -68,6 +68,8 @@ const getPlaceList = async (placeType, limit, offset,city_id) => {
   
 }
 
+///place info
+
 const PlaceInfo = async (req,res) => {
     const schema = Joi.object({
         place_id: Joi.number().required()
@@ -87,7 +89,7 @@ const PlaceInfo = async (req,res) => {
         if (!placeInfo) return res.json({
             message: 'Not able to find place info.',
             error: 'No Place Found',
-            placeInfo: []
+            placeInfo:{}
         });
 
         res.json({
@@ -96,22 +98,138 @@ const PlaceInfo = async (req,res) => {
         });
     } catch (error) {
         res.status(400).json({
-            message: 'Place Info Error',
+            message: 'Place Info Error.',
             error: error
         });
     }
 
 }
-
 const getPlaceInfo = async (place_id) => {
     try {
         let query = `SELECT * FROM place WHERE place_id=${place_id}`;
         let placeInfo = await Mysql.execute(query);
-        return placeInfo[0];
+        return placeInfo[0][0];
     } catch (error) {
         
     }
 }
+const PlaceInfoWithAuth = async (req,res) => {
+    const schema= Joi.object({
+        userid: Joi.number().required(),
+        place_id: Joi.number().required()
+    });
+
+    const { userid } = req.user
+    const { place_id } = req.params;
+    try {
+        const { error } = schema.validate({ userid,place_id });
+        if (error) {
+            return res.status(400).json({
+                message: 'Not able to find place info.',
+                error: error.details[0].message
+            });
+        }
+
+        let placeInfo = await getPlaceInfoWithAuth(place_id,userid);
+        if (!placeInfo) return res.json({
+            message: 'Not able to find place info.',
+            error: 'No Place Found',
+            placeInfo: {}
+        });
+
+        res.json({
+            message: 'Place Info Found Successfully.',
+            placeInfo: placeInfo
+        });
+        
+    } catch (error) {
+        
+    }
+
+}
+const getPlaceInfoWithAuth = async (place_id,userid) => {
+    try {
+        let query = `SELECT * FROM place WHERE place_id=${place_id}`;
+        let placeInfo = await Mysql.execute(query);
+        let query2 = `SELECT * FROM favorite WHERE place_id=${place_id} AND user_id=${userid}`;
+        let placeInfo2 = await Mysql.execute(query2);
+        if(placeInfo2[0].length>0){
+            placeInfo[0][0].is_fav = true;
+        }else{
+            placeInfo[0][0].is_fav = false;
+        }
+        return placeInfo[0][0];
+    } catch (error) {
+        
+    }
+}
+
+
+//update favorite
+const updateFavorite = async (req,res) => {
+    const schema = Joi.object({
+        userid: Joi.number().required(),
+        place_id: Joi.number().required()
+    });
+
+    const { userid } = req.user
+    const { place_id } = req.params;
+    try {
+        const { error } = schema.validate({ userid,place_id });
+        if (error) {
+            return res.status(400).json({
+                message: 'Not able to update favorite.',
+                error: error.details[0].message
+            });
+        }
+
+        let placeInfo = await FavoriteActions(place_id,userid);
+        if (!placeInfo) return res
+        .status(400)
+        .json({
+            message: 'Not able to update favorite.',
+            error: 'No Place Found',
+        });
+
+        return res.json({
+            message: 'Favorite Updated Successfully.',
+
+        })
+        
+    } catch (error) {
+        res.status(400).json({
+            message: 'Favorite Update Error.',
+            error: error
+        });
+        
+    }
+
+}
+
+const FavoriteActions = async (place_id,userid) => {
+    try {
+        let query = `SELECT * FROM favorite WHERE place_id=${place_id} AND user_id=${userid}`;
+        let placeInfo = await Mysql.execute(query);
+        if(placeInfo[0].length>0){
+            let query2 = `DELETE FROM favorite WHERE place_id=${place_id} AND user_id=${userid}`;
+            let placeInfo2 = await Mysql.execute(query2);
+            return placeInfo2[0];
+        }else{
+            let query2 = `INSERT INTO favorite (place_id,user_id) VALUES (${place_id},${userid})`;
+            let placeInfo2 = await Mysql.execute(query2);
+            return placeInfo2[0];
+        }
+        
+    } catch (error) {
+        return false;
+        
+    }
+
+}
+
+
 module.exports = {
-    PlaceList
+    PlaceList,
+    PlaceInfo,
+    PlaceInfoWithAuth
 }
