@@ -18,8 +18,12 @@ const PlaceList = async (req, res) => {
         placeType: Joi.string().valid(...PLACETYPE).required(),
         limit: Joi.number().default(10),
         offset: Joi.number().default(0),
-        city_id: Joi.number().required()
+        city_id: Joi.number().required().min(1)
+
+
     });
+    //city must be greater than 0
+
     const { placeType, limit=10, offset=1,city_id } = req.body;
 
     try {
@@ -108,10 +112,32 @@ const getPlaceInfo = async (place_id) => {
     try {
         let query = `SELECT * FROM place WHERE place_id=${place_id}`;
         let placeInfo = await Mysql.execute(query);
+        let images = await getPlaceImages(place_id);
+        placeInfo[0][0].images = images;
         return placeInfo[0][0];
     } catch (error) {
         
     }
+}
+const getPlaceImages = async (place_id) => {
+    try {
+        let query =''
+        // if(user_id){
+        //     query=`SELECT place.*, rating.rating FROM place
+        //     left JOIN rating on rating.place_id =place.place_id and rating.user_id= ${user_id}
+        //     where place.place_id =${place_id} `
+            
+        // }else{
+
+            query = `SELECT * FROM placeimage WHERE place_id=${place_id}`;
+        
+        
+        let images = await Mysql.execute(query);
+        return images[0];
+    } catch (error) {
+        return [];
+    }
+
 }
 const PlaceInfoWithAuth = async (req,res) => {
     const schema= Joi.object({
@@ -149,7 +175,7 @@ const PlaceInfoWithAuth = async (req,res) => {
 }
 const getPlaceInfoWithAuth = async (place_id,userid) => {
     try {
-        let query = `SELECT * FROM place WHERE place_id=${place_id}`;
+        let query = `SELECT place.*, rating.rating as userRating FROM place left JOIN rating on rating.place_id =place.place_id and rating.user_id= ${userid} where place.place_id =${place_id} `;
         let placeInfo = await Mysql.execute(query);
         let query2 = `SELECT * FROM favorite WHERE place_id=${place_id} AND user_id=${userid}`;
         let placeInfo2 = await Mysql.execute(query2);
@@ -158,6 +184,9 @@ const getPlaceInfoWithAuth = async (place_id,userid) => {
         }else{
             placeInfo[0][0].is_fav = false;
         }
+        let images = await getPlaceImages(place_id);
+        placeInfo[0][0].images = images;
+
         return placeInfo[0][0];
     } catch (error) {
         
@@ -173,7 +202,7 @@ const updateFavorite = async (req,res) => {
     });
 
     const { userid } = req.user
-    const { place_id } = req.params;
+    const { place_id } = req.body;
     try {
         const { error } = schema.validate({ userid,place_id });
         if (error) {
@@ -231,5 +260,6 @@ const FavoriteActions = async (place_id,userid) => {
 module.exports = {
     PlaceList,
     PlaceInfo,
-    PlaceInfoWithAuth
+    PlaceInfoWithAuth,
+    updateFavorite
 }
