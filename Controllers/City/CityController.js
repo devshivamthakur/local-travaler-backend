@@ -4,7 +4,7 @@ const Mysql = require("../../DB/Mysql");
 const getAllCities = async (req, res) => {
     try {
         let cities = await Mysql.query("SELECT * FROM city");
-        res.status(400).json({
+        res.status(200).json({
             message: CITY_LIST_REQUEST,
             cities: cities[0]
         });

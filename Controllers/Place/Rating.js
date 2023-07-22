@@ -14,27 +14,21 @@ const SubmitRating = async (req, res) => {
 
     try {
         const { error } = schema.validate({ place_id, rating,userid });
-        if (error) {
-            console.log(error)
-            
+        if (error) {            
             return res.status(400).json({
                 message: 'Not able to submit rating.',
                 error: error.details[0].message
             });
         }
-
         let submitRating = await submitRating_(place_id, rating, userid);
         if (!submitRating) return res.json({
             message: submitRating,
             error: 'No Rating Found',
         });
-
         res.json({
             message: 'Rating Submitted Successfully.',
         });
     } catch (error) {
-        console.log(error)
-
         res.status(400).json({
             message: 'Rating Error',
             error: error

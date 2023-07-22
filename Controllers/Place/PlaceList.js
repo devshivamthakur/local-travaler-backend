@@ -17,7 +17,7 @@ const PlaceList = async (req, res) => {
     const schema = Joi.object({
         placeType: Joi.string().valid(...PLACETYPE).required(),
         limit: Joi.number().default(10),
-        offset: Joi.number().default(0),
+        offset: Joi.number().default(1),
         city_id: Joi.number().required().min(1)
 
 
@@ -63,7 +63,8 @@ const getPlaceList = async (placeType, limit, offset,city_id) => {
             let placeList = await Mysql.execute(query);
             return placeList[0];
         }
-        let query = `SELECT * FROM place WHERE place_type='${placeType}' and city_id=${city_id} ORDER BY rating DESC, total_visited DESC LIMIT ${limit} OFFSET ${offset}`;
+
+        let query = `SELECT * FROM place WHERE place_category='${placeType}' and city_id=${city_id} ORDER BY rating DESC, total_visited DESC LIMIT ${limit} OFFSET ${offset}`;
         let placeList = await Mysql.execute(query);
         return placeList[0];
     } catch (error) {
