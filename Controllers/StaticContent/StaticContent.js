@@ -46,7 +46,7 @@ const getStaticContentFromDB = async (type) => {
         throw error;
     }
 }
-  
+
 module.exports = {
     getStaticContent
 }
