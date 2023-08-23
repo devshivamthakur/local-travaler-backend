@@ -6,7 +6,8 @@ const  {
      PlaceList,
      PlaceInfo,
      PlaceInfoWithAuth,
-     updateFavorite
+     updateFavorite,
+     VisitedPlaceList
 } = require('../Controllers/Place/PlaceList')
 
 const {
@@ -20,5 +21,7 @@ router.post('/updateFavorite',verifyToken, updateFavorite)
 router.post('/submitRating',verifyToken, require('../Controllers/Place/Rating').SubmitRating)
 router.get('/favplaces',verifyToken, require('../Controllers/Place/FavPlace').getUserFavPlaces)
 router.delete('/deleteFavPlace',verifyToken, deletFromFavPlaceApi)
+router.post('/visitedPlaceList',verifyToken, VisitedPlaceList)
+
 
 module.exports = router

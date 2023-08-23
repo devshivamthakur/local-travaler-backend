@@ -25,6 +25,7 @@ const PlaceList = async (req, res) => {
     //city must be greater than 0
 
     const { placeType, limit=10, offset=1,city_id } = req.body;
+    console.log(placeType)
 
     try {
         const { error } = schema.validate({ placeType, limit, offset, city_id });
@@ -257,10 +258,73 @@ const FavoriteActions = async (place_id,userid) => {
 
 }
 
+//visited place list 
+const VisitedPlaceList = async (req,res) => {
+    const schema = Joi.object({
+        userid: Joi.number().required(),
+        limit: Joi.number().default(10),
+        offset: Joi.number().default(1),
+    });
+
+    const { userid } = req.user
+    const { limit=10, offset=1 } = req.body;
+    try {
+        const { error } = schema.validate({ userid,limit,offset });
+        if (error) {
+            return res.status(400).json({
+                message: 'Not able to find visited place list.',
+                error: error.details[0].message
+            });
+        }
+        const Page = (offset - 1) * limit;
+
+        let placelists = await getVisitedPlaceList(userid,limit,Page);
+        if (!placelists) return res
+        .status(400)
+        .json({
+            message: 'Not able to find visited place list.',
+            error: 'No Place Found',
+            placelists: []
+        });
+
+        return res.json({
+            message: 'Visited Place List Found Successfully.',
+            placelists: placelists
+        })
+        
+    } catch (error) {
+        res.status(400).json({
+            message: 'Visited Place List Error.',
+            error: error
+        });
+        
+    }
+
+}
+
+const getVisitedPlaceList = async (userid,limit,offset) => {
+    try {
+        //get place id from rating table and then get place info from place table
+
+        // let query = `SELECT * FROM rating WHERE user_id=${userid} ORDER BY visited_at DESC LIMIT ${limit} OFFSET ${offset}`;
+let query = `SELECT rating.*,place.*  FROM rating 
+left JOIN place on rating.place_id= place.place_id WHERE user_id=${userid} ORDER BY rating.created_at DESC LIMIT ${limit} OFFSET ${offset}
+`;        
+console.log(query)
+        let placeInfo = await Mysql.execute(query);
+        return placeInfo[0];
+        
+    } catch (error) {
+        return false;
+        
+    }
+
+}
 
 module.exports = {
     PlaceList,
     PlaceInfo,
     PlaceInfoWithAuth,
-    updateFavorite
+    updateFavorite,
+    VisitedPlaceList
 }
