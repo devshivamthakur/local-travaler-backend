@@ -1,9 +1,9 @@
 const userinfoConstants = require("../../Constants/Userinfo/Userinfoconstants");
-const Mysql = require("../../DB/Mysql");
 const Joi = require('joi');
 const jwt = require('jsonwebtoken');
+const Userinfo = require('../../Modals/user.modal')
+const ApiError = require("../../middleware/Apierrors")
 require("dotenv").config();
-
 // Function to generate access token
 const generateAccessToken = (userid) => {
     return jwt.sign({
@@ -11,7 +11,8 @@ const generateAccessToken = (userid) => {
         currentDateTime: new Date().toISOString()
     }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30d' });
 }
-const Login = async (req, res) => {
+
+const Login = async (req, res,next) => {
     const schema = Joi.object({
         googleId: Joi.string().required(),
         email: Joi.string().email().required(),
@@ -23,120 +24,121 @@ const Login = async (req, res) => {
     try {
         const { error } = schema.validate({ googleId, email, name });
         if (error) {
-            return res.status(400)
-            .json({
-                message: userinfoConstants.USER_DEATAILS_ERROR,
-                error: error.details[0].message
-            });
+            throw new ApiError(400,userinfoConstants.USER_DETAILS_ERROR)
         }
 
-        let userExists = await checkUserExists(googleId, email);
-        if (userExists) {
-            userExists.token=generateAccessToken(userExists.id)
+
+        let user = await  checkUserExists(googleId, email);
+        if (user) {
+            user.token = generateAccessToken(user.id);
             return res.json({
                 message: userinfoConstants.USER_DEATAILS,
-                user: userExists
+                user
             });
         }
 
-        let newUser = await insertUser(googleId, email, name);
-        if(!newUser) return res.status(400).json({
-            message: userinfoConstants.USER_DEATAILS_ERROR,
-            error: userinfoConstants.USER_NOT_CREATED
-        });
+        user = await insertUser(googleId, email, name);
+        if (!user) {
+            throw new ApiError(400,userinfoConstants.USER_DETAILS_ERROR)
+        }
 
-
-        newUser.token=generateAccessToken(newUser.id)
+        user.token = generateAccessToken(user.id);
         res.json({
             message: userinfoConstants.USER_DEATAILS,
-            user: newUser
+            user
         });
     } catch (error) {
-        res.status(400).json({
-            message: userinfoConstants.USER_DEATAILS_ERROR,
-            error: error
-        });
+        next(error)
+
     }
 };
 
-// Function to check if user already exists
-const checkUserExists = async(googleId, email) => {
-    return Mysql.execute('SELECT * FROM userinfo WHERE google_id = ? AND email = ?', [googleId, email])
-        .then(([rows, fields]) => {
-            return rows.length > 0 ? rows[0] : null;
-        })
-        .catch(err => {
-            throw err;
-        });
-};
-
-// Function to insert a new user
-const insertUser = async(googleId, email, name) => {
-    return Mysql.execute('INSERT INTO userinfo (google_id, email, name) VALUES (?,?,?)', [googleId, email, name])
-        .then(([rows, fields]) => {
-
-            return rows.insertId > 0 ? GetUserinfo(rows.insertId) : null;
-
-        })
-        .catch(err => {
-            throw err;
-        });
-};
-
-const GetUserinfo = async(userid) => {
+const checkUserExists = async (googleId, email) => {
     try {
-        return Mysql.execute('SELECT * FROM userinfo WHERE id = ? ', [userid])
-        .then(([rows, fields]) => {
-
-            return rows.length > 0 ? rows[0] : null;
-        })
-        .catch(err => {
-            throw err;
-        });
-    } catch (error) {
+      const result = await Userinfo.findOne({
+            $or:[
+                {googleId:googleId},
+                {
+                    email:email
+                }
+            ]
+        },
+        {
+            createdAt: 0,
+            updatedAt: 0
+        }
         
+        ).lean()
+
+        if (result && result._id) {
+            result.id = result._id
+        }
+        return result
+
+    } catch (error) {
+        throw new ApiError(500,userinfoConstants.SERVER_ERROR)
     }
-    
+};
 
-}
+const insertUser = async (googleId, email, name) => {
+    try {
+        const userObject = {
+            google_id: googleId,
+            email: email,
+            name: name
+        };
 
-// Function to get user details by id
-const userinfo =async (req, res) => {
+        const result = await Userinfo.create(userObject);
+        return await getUserInfo(result._id);
+    } catch (error) {
+        throw new ApiError(500,userinfoConstants.SERVER_ERROR)
+    }
+};
 
-    const schema= Joi.object({
-        userid: Joi.number().required()
+const getUserInfo = async (userId) => {
+    try {
+        const result = await Userinfo.findOne({_id: userId},{
+            createdAt: 0,
+            updatedAt: 0
+        }).lean()
+
+        if (result && result._id) {
+            result.id = result._id
+        }
+        return result
+    } catch (error) {
+        throw new ApiError(500,userinfoConstants.SERVER_ERROR)
+    }
+};
+
+const userinfo = async (req, res,next) => {
+    const schema = Joi.object({
+        userid: Joi.string().required() // Changed to string since ObjectId is a string
     });
 
-    const { userid } = req.user
+    const { userid } = req.user;
     try {
         const { error } = schema.validate({ userid });
         if (error) {
-            return res.json({
-                message: userinfoConstants.USER_DEATAILS_ERROR,
-                error: error.details[0].message
-            });
+         throw  ApiError(400,userinfoConstants.USER_DETAILS_ERROR)
         }
 
-        const userinfo = await GetUserinfo(userid);
+        const user = await getUserInfo(userid);
 
-        if (userinfo) {
+        if (user) {
             return res.json({
                 message: userinfoConstants.USER_DEATAILS,
-                user: userinfo
+                user
             });
         }
 
-        res.json({
-            message: userinfoConstants.USER_DEATAILS_ERROR,
-            error: userinfoConstants.USER_NOT_FOUND
-        });
-        
+        throw  ApiError(400,userinfoConstants.USER_DETAILS_ERROR)
     } catch (error) {
-        
+        next(error)
+
     }
+};
 
-
-}
 
 
 module.exports = {

@@ -1,10 +1,10 @@
-const Mysql = require("../../DB/Mysql");
 const Joi = require('joi');
+const MongoDb = require("../../DB/MongoDb");
 
 const getUserFavPlaces = async (req, res) => {
     const schema = Joi.object({
-        limit: Joi.number().default(10),
-        offset: Joi.number().default(1),
+        limit: Joi.number().default(10).max(100),
+        offset: Joi.number().default(1).max(20),
     });
     try {
         const { error } = schema.validate(req.query);
@@ -29,9 +29,10 @@ const getUserFavPlaces = async (req, res) => {
         });
         
     } catch (error) {
-        res.status(400).json({
-            message: 'Place List Error',
-            error: error
+        console.error(error)
+        res.end(500).json({
+            message: 'server error',
+            error: 'not abe to find place list'
         });
         
     }
@@ -39,11 +40,38 @@ const getUserFavPlaces = async (req, res) => {
 
 const getFavPlaceList = async (user_id, limit, offset) => {
     try {
-        let sql = `SELECT * FROM place WHERE place_id IN (SELECT place_id FROM favorite  WHERE user_id = ${user_id}) LIMIT ${limit} OFFSET ${offset}`;
-        let result = await Mysql.execute(sql);
-        return result[0];
+        const db = await MongoDb.connect()
+        let result = await db.collection('place').aggregate(
+            [
+                {
+                    $lookup:{
+                        from:"favorite",
+                        localField: "place_id",
+                        foreignField: "place_id",
+                        as: 'favoritedetails'
+
+
+                    }
+                },
+                {
+                    $match:{
+                        "favoritedetails.user_id": user_id
+                    }
+                },
+                {
+                    $project:{
+                        "favoritedetails":0,
+                        _id:0
+                    }
+                }
+            ]
+        ).skip(offset)
+        .limit(Number(limit)).toArray()
+        return result;
     } catch (error) {
         throw error;
+    }finally{
+        
     }
 }
 
@@ -73,7 +101,7 @@ const deletFromFavPlaceApi = async (req,res) => {
     } catch (error) {
        return res.status(400).json({
             message: 'Place List Error',
-            error: error
+            error: 'Not able to remove from favorite.'
         });
         
     }
@@ -81,9 +109,9 @@ const deletFromFavPlaceApi = async (req,res) => {
 
 const deleteFavPlace = async (user_id, place_id) => {
     try {
-        let sql = `DELETE FROM favorite WHERE user_id = ${user_id} AND place_id = ${place_id}`;
-        let result = await Mysql.execute(sql);
-        return true
+        const db = await MongoDb.connect()
+        const deleteStatus = await db.collection('favorite').deleteOne({user_id: user_id, place_id: place_id})
+        return deleteStatus?.deletedCount > 0
     } catch (error) {
         throw error;
 

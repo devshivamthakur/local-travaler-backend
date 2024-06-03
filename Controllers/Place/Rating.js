@@ -1,5 +1,5 @@
-const Mysql = require("../../DB/Mysql");
 const Joi = require('joi');
+const MongoDb = require("../../DB/MongoDb");
 
 const SubmitRating = async (req, res) => {
 
@@ -13,8 +13,8 @@ const SubmitRating = async (req, res) => {
     const { userid } = req.user;
 
     try {
-        const { error } = schema.validate({ place_id, rating,userid });
-        if (error) {            
+        const { error } = schema.validate({ place_id, rating, userid });
+        if (error) {
             return res.status(400).json({
                 message: 'Not able to submit rating.',
                 error: error.details[0].message
@@ -36,23 +36,54 @@ const SubmitRating = async (req, res) => {
     }
 }
 
-const submitRating_ = async (place_id, rating,  user_id) => {
+const submitRating_ = async (place_id, rating, user_id) => {
     try {
-        //first check if user already rated this place
-        let query1 = `SELECT * FROM rating WHERE place_id=${place_id} AND user_id=${user_id}`;
-        let checkRating = await Mysql.execute(query1);
-        if(checkRating[0].length > 0){
+        const db = await MongoDb.connect()
+        const ratingCollection = await db.collection('rating');
+
+        const ratingExists = await ratingCollection.findOne({ place_id: Number(place_id), user_id: Number(user_id) })
+        if (ratingExists) {
             return 'You have already given the rating .';
+
         }
-        let query = `INSERT INTO rating (place_id, rating, user_id) VALUES (${place_id}, ${rating}, ${user_id})`;
-        let submitRating = await Mysql.execute(query);
-        let query2 = `UPDATE place SET rating = (SELECT AVG(rating) FROM rating WHERE place_id=${place_id}) WHERE place_id=${place_id}`;
-        let submitRating2 = await Mysql.execute(query2);
-        return "You have given rating successfully.";    
+
+        const insertRating = await ratingCollection.insertOne({
+            rating: rating,
+            place_id: Number(place_id),
+            user_id: Number(user_id),
+            created_at: new Date(),
+            updated_at: new Date()
+        })
+
+        const avgRating = await ratingCollection.aggregate([
+            {
+                $match:{
+                    place_id: Number(place_id)
+                }
+            },
+            {
+                $group:{
+                    _id:"place_id",
+                    avgRating:{
+                        $avg:'$rating'
+                    }
+                }
+            }
+        ]).toArray()
+
+        const ratingPlace = avgRating[0]?.avgRating 
+        const updatePlace = await db.collection("place").updateOne({ place_id }, 
+            {
+                $set:{
+                    rating: ratingPlace || 0
+                }
+            }
+        )
+
+        return "You have given rating successfully.";
     } catch (error) {
         throw error;
     }
-    return false;
 
 }
 

@@ -1,6 +1,6 @@
 const PlaceListConstants = require("../../Constants/PlaceList");
-const Mysql = require("../../DB/Mysql");
 const Joi = require('joi');
+const MongoDb = require("../../DB/MongoDb");
 
 const PLACETYPE = [
     PlaceListConstants.POPULAR_DESTINATION,
@@ -16,16 +16,15 @@ const PLACETYPE = [
 const PlaceList = async (req, res) => {
     const schema = Joi.object({
         placeType: Joi.string().valid(...PLACETYPE).required(),
-        limit: Joi.number().default(10),
-        offset: Joi.number().default(1),
+        limit: Joi.number().default(10).max(100),
+        offset: Joi.number().default(1).max(20),
         city_id: Joi.number().required().min(1)
 
 
     });
     //city must be greater than 0
 
-    const { placeType, limit=10, offset=1,city_id } = req.body;
-    console.log(placeType)
+    const { placeType, limit = 10, offset = 1, city_id } = req.body;
 
     try {
         const { error } = schema.validate({ placeType, limit, offset, city_id });
@@ -49,34 +48,54 @@ const PlaceList = async (req, res) => {
             placeList: placeList
         });
     } catch (error) {
-        res.status(400).json({
+        console.log(error.message);
+        res.status(501).json({
             message: 'Place List Error',
-            error: error
+            error: 'Place List Error'
         });
     }
 }
 
-const getPlaceList = async (placeType, limit, offset,city_id) => {
+const getPlaceList = async (placeType, limit, offset, city_id) => {
     try {
-        if (placeType == PlaceListConstants.POPULAR_DESTINATION) {
-            //place with most rating and most viewed
-            let query = `SELECT * FROM place WHERE city_id=${city_id} ORDER BY rating DESC, total_visited DESC LIMIT ${limit} OFFSET ${offset}`;
-            let placeList = await Mysql.execute(query);
-            return placeList[0];
-        }
+        const db = await MongoDb.connect()
 
-        let query = `SELECT * FROM place WHERE place_category='${placeType}' and city_id=${city_id} ORDER BY rating DESC, total_visited DESC LIMIT ${limit} OFFSET ${offset}`;
-        let placeList = await Mysql.execute(query);
-        return placeList[0];
+
+        const result = await db.collection("place").aggregate(
+            [
+                {
+                    $match: {
+                        city_id: city_id,
+
+                        ...placeType != PlaceListConstants.POPULAR_DESTINATION && {
+                            place_category: placeType
+                        }
+                    }
+                },
+                {
+                    $sort: {
+                        rating: -1
+                    }
+                }
+            ]
+        )
+            .skip(offset)
+            .limit(Number(limit))
+            .toArray()
+
+        return result;
+
+
     } catch (error) {
-        
+        throw error
+
     }
-  
+
 }
 
 ///place info
 
-const PlaceInfo = async (req,res) => {
+const PlaceInfo = async (req, res) => {
     const schema = Joi.object({
         place_id: Joi.number().required()
     });
@@ -95,7 +114,7 @@ const PlaceInfo = async (req,res) => {
         if (!placeInfo) return res.json({
             message: 'Not able to find place info.',
             error: 'No Place Found',
-            placeInfo:{}
+            placeInfo: {}
         });
 
         res.json({
@@ -103,46 +122,50 @@ const PlaceInfo = async (req,res) => {
             placeInfo: placeInfo
         });
     } catch (error) {
-        res.status(400).json({
-            message: 'Place Info Error.',
-            error: error
+        res.status(500).json({
+            message: 'server error',
+            error: 'error'
         });
     }
 
 }
+
 const getPlaceInfo = async (place_id) => {
-    try {
-        let query = `SELECT * FROM place WHERE place_id=${place_id}`;
-        let placeInfo = await Mysql.execute(query);
-        let images = await getPlaceImages(place_id);
-        placeInfo[0][0].images = images;
-        return placeInfo[0][0];
-    } catch (error) {
-        
-    }
-}
-const getPlaceImages = async (place_id) => {
-    try {
-        let query =''
-        // if(user_id){
-        //     query=`SELECT place.*, rating.rating FROM place
-        //     left JOIN rating on rating.place_id =place.place_id and rating.user_id= ${user_id}
-        //     where place.place_id =${place_id} `
-            
-        // }else{
+    let db;
 
-            query = `SELECT * FROM placeimage WHERE place_id=${place_id}`;
-        
-        
-        let images = await Mysql.execute(query);
-        return images[0];
-    } catch (error) {
-        return [];
-    }
+    try {
+         db = await MongoDb.connect();  // Get the client
 
-}
-const PlaceInfoWithAuth = async (req,res) => {
-    const schema= Joi.object({
+        const result = await db.collection('place').aggregate(
+            [
+                {
+                    $match: {
+                        place_id: Number(place_id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "placeimage",
+                        localField: "place_id",
+                        foreignField: "place_id",
+                        as: 'images'
+                    }
+                }
+            ]
+        ).toArray();
+
+        return result[0] || {};
+    } catch (error) {
+        console.log(error);
+    } finally {
+        if (db) {
+            await db.close();  // Ensure the client is closed
+        }
+    }
+};
+
+const PlaceInfoWithAuth = async (req, res) => {
+    const schema = Joi.object({
         userid: Joi.number().required(),
         place_id: Joi.number().required()
     });
@@ -150,7 +173,7 @@ const PlaceInfoWithAuth = async (req,res) => {
     const { userid } = req.user
     const { place_id } = req.params;
     try {
-        const { error } = schema.validate({ userid,place_id });
+        const { error } = schema.validate({ userid, place_id });
         if (error) {
             return res.status(400).json({
                 message: 'Not able to find place info.',
@@ -158,7 +181,7 @@ const PlaceInfoWithAuth = async (req,res) => {
             });
         }
 
-        let placeInfo = await getPlaceInfoWithAuth(place_id,userid);
+        let placeInfo = await getPlaceInfoWithAuth(place_id, userid);
         if (!placeInfo) return res.json({
             message: 'Not able to find place info.',
             error: 'No Place Found',
@@ -169,35 +192,134 @@ const PlaceInfoWithAuth = async (req,res) => {
             message: 'Place Info Found Successfully.',
             placeInfo: placeInfo
         });
-        
+
     } catch (error) {
-        
+
     }
 
 }
-const getPlaceInfoWithAuth = async (place_id,userid) => {
-    try {
-        let query = `SELECT place.*, rating.rating as userRating FROM place left JOIN rating on rating.place_id =place.place_id and rating.user_id= ${userid} where place.place_id =${place_id} `;
-        let placeInfo = await Mysql.execute(query);
-        let query2 = `SELECT * FROM favorite WHERE place_id=${place_id} AND user_id=${userid}`;
-        let placeInfo2 = await Mysql.execute(query2);
-        if(placeInfo2[0].length>0){
-            placeInfo[0][0].is_fav = true;
-        }else{
-            placeInfo[0][0].is_fav = false;
-        }
-        let images = await getPlaceImages(place_id);
-        placeInfo[0][0].images = images;
 
-        return placeInfo[0][0];
+const getPlaceInfoWithAuth = async (place_id, userid) => {
+
+    let db;
+
+    try {
+
+         db = await MongoDb.connect()
+        const result = await db.collection('place').aggregate([
+
+            {
+                $match: {
+                    place_id: Number(place_id)
+                }
+            },
+            {
+                $lookup: {
+                    from: "rating",
+                    let: {
+                        placeId: '$place_id'
+                    },
+                    pipeline: [
+                        {
+
+                            $match: {
+
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ['$place_id', '$$placeId'],
+                                            $eq: ['$user_id', Number(userid)]
+
+                                        }
+                                    ]
+                                }
+
+                            }
+
+                        }
+                        ,
+                        {
+                            $project: {
+                                rating: 1,
+                                _id: 0
+                            }
+                        }
+                    ],
+                    as: "usersRating"
+
+                }
+            },
+            {
+                $unwind: {
+                    path: '$usersRating',
+                    preserveNullAndEmptyArrays: true  // Equivalent to LEFT JOIN
+                }
+            },
+            {
+                $addFields: {
+                    userRating: "$usersRating.rating"
+                }
+            },
+            {
+                $lookup: {
+                    from: "placeimage",
+                    localField: "place_id",
+                    foreignField: "place_id",
+                    as: 'images'
+                }
+            }
+            ,
+            {
+                $lookup:{
+                    from:"favorite",
+                    pipeline:[
+                        {
+                            $match:{
+                                $expr:{
+                                    $and:{
+                                        $eq:['place_id', Number(place_id)],
+                                        $eq:['user_id', Number(userid)]
+
+                                    }
+                                }
+                            }
+                        }
+                    ],
+                    as :"favorites"
+                }
+            },
+            {
+                $addFields:{
+                  is_fav:{
+                    $gt:[
+                        {
+                            $size:'$favorites'
+                        },
+                        0
+                    ]
+                  }  
+                }
+            },{
+                $project:{
+                    usersRating:0,
+                    favorites:0
+                }
+            },
+
+        ]).toArray()
+
+        return result[0] || {};
     } catch (error) {
-        
+        console.log('error', error)
+        throw error
+
     }
+    
 }
 
 
 //update favorite
-const updateFavorite = async (req,res) => {
+const updateFavorite = async (req, res) => {
     const schema = Joi.object({
         userid: Joi.number().required(),
         place_id: Joi.number().required()
@@ -206,7 +328,7 @@ const updateFavorite = async (req,res) => {
     const { userid } = req.user
     const { place_id } = req.body;
     try {
-        const { error } = schema.validate({ userid,place_id });
+        const { error } = schema.validate({ userid, place_id });
         if (error) {
             return res.status(400).json({
                 message: 'Not able to update favorite.',
@@ -214,52 +336,57 @@ const updateFavorite = async (req,res) => {
             });
         }
 
-        let placeInfo = await FavoriteActions(place_id,userid);
+        let placeInfo = await FavoriteActions(place_id, userid);
         if (!placeInfo) return res
-        .status(400)
-        .json({
-            message: 'Not able to update favorite.',
-            error: 'No Place Found',
-        });
+            .status(400)
+            .json({
+                message: 'Not able to update favorite.',
+                error: 'No Place Found',
+            });
 
         return res.json({
             message: 'Favorite Updated Successfully.',
 
         })
-        
+
     } catch (error) {
-        res.status(400).json({
-            message: 'Favorite Update Error.',
-            error: error
+        res.status(501).json({
+            message: 'server error.',
+            error: 'Error updating favorite'
         });
-        
+
     }
 
 }
 
-const FavoriteActions = async (place_id,userid) => {
+const FavoriteActions = async (place_id, userid) => {
     try {
-        let query = `SELECT * FROM favorite WHERE place_id=${place_id} AND user_id=${userid}`;
-        let placeInfo = await Mysql.execute(query);
-        if(placeInfo[0].length>0){
-            let query2 = `DELETE FROM favorite WHERE place_id=${place_id} AND user_id=${userid}`;
-            let placeInfo2 = await Mysql.execute(query2);
-            return placeInfo2[0];
-        }else{
-            let query2 = `INSERT INTO favorite (place_id,user_id) VALUES (${place_id},${userid})`;
-            let placeInfo2 = await Mysql.execute(query2);
-            return placeInfo2[0];
+        const db = await MongoDb.connect()
+
+        const favorite = await db.collection('favorite').findOne({place_id: Number(place_id),user_id:userid})
+        if(favorite){
+            const deleteStatus = await db.collection('favorite').deleteOne({place_id: Number(place_id),user_id:userid});
+            return deleteStatus;
+
         }
-        
+
+        const addFav = await db.collection('favorite').insertOne({
+            place_id: Number(place_id),
+            user_id:userid,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        });
+        return addFav;
+
     } catch (error) {
         return false;
-        
+
     }
 
 }
 
 //visited place list 
-const VisitedPlaceList = async (req,res) => {
+const VisitedPlaceList = async (req, res) => {
     const schema = Joi.object({
         userid: Joi.number().required(),
         limit: Joi.number().default(10),
@@ -267,9 +394,9 @@ const VisitedPlaceList = async (req,res) => {
     });
 
     const { userid } = req.user
-    const { limit=10, offset=1 } = req.body;
+    const { limit = 10, offset = 1 } = req.body;
     try {
-        const { error } = schema.validate({ userid,limit,offset });
+        const { error } = schema.validate({ userid, limit, offset });
         if (error) {
             return res.status(400).json({
                 message: 'Not able to find visited place list.',
@@ -278,45 +405,82 @@ const VisitedPlaceList = async (req,res) => {
         }
         const Page = (offset - 1) * limit;
 
-        let placelists = await getVisitedPlaceList(userid,limit,Page);
+        let placelists = await getVisitedPlaceList(userid, limit, Page);
         if (!placelists) return res
-        .status(400)
-        .json({
-            message: 'Not able to find visited place list.',
-            error: 'No Place Found',
-            placelists: []
-        });
+            .status(400)
+            .json({
+                message: 'Not able to find visited place list.',
+                error: 'No Place Found',
+                placelists: []
+            });
 
         return res.json({
             message: 'Visited Place List Found Successfully.',
             placelists: placelists
         })
-        
+
     } catch (error) {
-        res.status(400).json({
-            message: 'Visited Place List Error.',
-            error: error
+        res.status(500).json({
+            message: 'server error',
+            error: 'Server error'
         });
-        
+
     }
 
 }
 
-const getVisitedPlaceList = async (userid,limit,offset) => {
+const getVisitedPlaceList = async (userid, limit, offset) => {
     try {
-        //get place id from rating table and then get place info from place table
+        userid = 6
+        console.log('Getting Visited Place List',userid, limit, offset)
+        
+        const db = await MongoDb.connect();
+        const results = await db.collection('rating').aggregate(
+            [
+                {
+                    $match:{
+                        user_id:Number(userid)
+                    }
+                },
+                {
+                    $lookup:{
+                        from:"place",
+                        localField:"place_id",
+                        foreignField:"place_id",
+                        as:"placeData"
+                    }
+                },
 
-        // let query = `SELECT * FROM rating WHERE user_id=${userid} ORDER BY visited_at DESC LIMIT ${limit} OFFSET ${offset}`;
-let query = `SELECT rating.*,place.*  FROM rating 
-left JOIN place on rating.place_id= place.place_id WHERE user_id=${userid} ORDER BY rating.created_at DESC LIMIT ${limit} OFFSET ${offset}
-`;        
-console.log(query)
-        let placeInfo = await Mysql.execute(query);
-        return placeInfo[0];
-        
+                {
+                    $unwind:{
+                        path:"$placeData"
+                    }
+                },
+                {
+                    $replaceRoot: {
+                      newRoot: { $mergeObjects: ["$placeData", "$$ROOT"] } // Merge placeData fields with the root document
+                    }
+                  },
+                {
+                    $sort:{
+                        created_at:-1
+                    }
+                },
+                {
+                    $project:{
+                        placeData:0,
+                        _id:0
+                    }
+                }
+            ]
+        ).limit(limit).skip(offset).toArray()
+
+        return results;
+
     } catch (error) {
+        console.log(error)
         return false;
-        
+
     }
 
 }

@@ -1,0 +1,113 @@
+
+        /user/auth, POST, {"googleId":"1079339257dsf98ee1w1","email":"itsprodsfsddfgme@ga993.com","name":"shivadfwdsfdfdm "}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITIO, GET, {}, {"type":"TERMS_CONDITIO"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITIO, GET, {}, {"type":"TERMS_CONDITIO"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune","city_image":""}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune","city_image":"city/pune.jpg"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune","city_image":"city/pune.jpg"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune","city_image":"city/pune.jpg"}, {},
+        
+        /city, GET, {}, {},
+        
