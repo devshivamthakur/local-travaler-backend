@@ -1,7 +1,11 @@
 const Joi = require('joi');
-const MongoDb = require("../../DB/MongoDb");
+const ApiError = require('../../middleware/Apierrors');
+const PlaceModal = require('../../Modals/place.modal');
+const { default: mongoose } = require('mongoose');
+const Favorite = require('../../Modals/favorite.modal');
+const { validatePlaceId } = require('./PlaceList');
 
-const getUserFavPlaces = async (req, res) => {
+const getUserFavPlaces = async (req, res,next) => {
     const schema = Joi.object({
         limit: Joi.number().default(10).max(100),
         offset: Joi.number().default(1).max(20),
@@ -9,19 +13,11 @@ const getUserFavPlaces = async (req, res) => {
     try {
         const { error } = schema.validate(req.query);
         if (error) {
-            return res.status(400).json({
-                message: 'Not able to find place list.',
-                error: error.details[0].message
-            });
+            throw new ApiError(400,error.details[0].message)
         }
         const { limit = 10, offset = 1 } = req.query;
         const Page = (offset - 1) * limit;
         let placeList = await getFavPlaceList(req.user.userid, limit, Page);
-        if (!placeList) return res.json({
-            message: 'Not able to find place list.',
-            error: 'No Place Found',
-            placeList: []
-        });
 
         res.json({
             message: 'Place List Found Successfully.',
@@ -29,67 +25,49 @@ const getUserFavPlaces = async (req, res) => {
         });
         
     } catch (error) {
-        console.error(error)
-        res.end(500).json({
-            message: 'server error',
-            error: 'not abe to find place list'
-        });
+        next(error)
         
     }
 }
 
 const getFavPlaceList = async (user_id, limit, offset) => {
     try {
-        const db = await MongoDb.connect()
-        let result = await db.collection('place').aggregate(
-            [
-                {
-                    $lookup:{
-                        from:"favorite",
-                        localField: "place_id",
-                        foreignField: "place_id",
-                        as: 'favoritedetails'
 
+        const result = await Favorite.find({ user: new mongoose.Types.ObjectId(user_id)}).populate('place').skip(offset)
+        .limit(Number(limit)).lean()
 
-                    }
-                },
-                {
-                    $match:{
-                        "favoritedetails.user_id": user_id
-                    }
-                },
-                {
-                    $project:{
-                        "favoritedetails":0,
-                        _id:0
-                    }
-                }
-            ]
-        ).skip(offset)
-        .limit(Number(limit)).toArray()
-        return result;
-    } catch (error) {
-        throw error;
-    }finally{
+        // Transform the result to bring place object keys to the parent level
+        const transformedResult = result.map(fav => ({
+            ...fav.place, // Spread place object properties
+            ...fav, // Spread other properties from favorite object
+            place: undefined, // Remove the nested place object
+        }));
         
+        return transformedResult;
+    } catch (error) {
+        throw new ApiError(500, "Server Error")
+
     }
 }
 
-const deletFromFavPlaceApi = async (req,res) => {
+const deletFromFavPlaceApi = async (req, res, next) => {
     const schema = Joi.object({
-        place_id: Joi.number().required()
+        place_id: Joi.string().required()
     });
     try {
+        const { place_id } = req.query;
         const { error } = schema.validate(req.query);
         if (error) {
-            return res.status(400).json({
-                message: error.details[0].message,
-                error: error.details[0].message
-            });
+            throw new ApiError(400,error.message)
         }
-        const { place_id } = req.query;
+
+        const placeValidation = await validatePlaceId(place_id)
+        if(!placeValidation){
+            throw new ApiError(400, 'invalid place_id')
+        }
+
         let result = await deleteFavPlace(req.user.userid, place_id);
-        if (!result) return res.json({
+        if (!result) return res.status(404).json({
             message: 'Not able to remove from favorite.',
             error: 'No Place Found',
         });
@@ -99,21 +77,17 @@ const deletFromFavPlaceApi = async (req,res) => {
         });
         
     } catch (error) {
-       return res.status(400).json({
-            message: 'Place List Error',
-            error: 'Not able to remove from favorite.'
-        });
+       next(error)
         
     }
 }
 
 const deleteFavPlace = async (user_id, place_id) => {
     try {
-        const db = await MongoDb.connect()
-        const deleteStatus = await db.collection('favorite').deleteOne({user_id: user_id, place_id: place_id})
+        const deleteStatus = await Favorite.deleteOne({user: new mongoose.Types.ObjectId(user_id), place: new mongoose.Types.ObjectId(place_id)})
         return deleteStatus?.deletedCount > 0
     } catch (error) {
-        throw error;
+        throw new ApiError(500, "Server Error")
 
     }
 

@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 const userinfoConstants = require("../Constants/Userinfo/Userinfoconstants");
 const ApiError = require("./Apierrors");
+const Userinfo = require("../Modals/user.modal");
 
 const config = process.env;
 
-const verifyToken = (req, res, next) => {
+const verifyToken = async (req, res, next) => {
   const token =req.headers["token"];
 
   try {
@@ -14,6 +15,11 @@ const verifyToken = (req, res, next) => {
 
     const decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET);
     req.user = decoded;
+    const result = await Userinfo.findById(req.user.userid)
+    if(!result){
+      throw  next(new ApiError(403, userinfoConstants.UNAUTHORIZED))
+
+    }
 
   } catch (err) {
     next(new ApiError(403, userinfoConstants.UNAUTHORIZED))

@@ -9,15 +9,21 @@ app.use(express.urlencoded({
 const userinfo_routes = require('./Routes/Userinfo')
 const ApiError = require('./middleware/Apierrors')
 const CityRoutes = require('./Routes/CityRoutes')
-// const PlaceRoute = require('./Routes/PlaceRoute')
+const PlaceRoute = require('./Routes/PlaceRoute')
 const StaticContentRoute = require('./Routes/StaticContentRoute')
+require("./Modals/placeimage.modal")
+require("./Modals/city.modal")
+require("./Modals/favorite.modal")
+require("./Modals/rating.modal")
 
 
-ConnectMongo()
+ConnectMongo().then(()=>{
+  app.listen(5000, () => {
+      console.log('server is listening on port 5000')
+  })
 
-app.listen(5000, () => {
-    console.log('server is listening on port 5000')
 })
+
 
 app.use((req, res,next) => {
 
@@ -39,7 +45,7 @@ app.use((req, res,next) => {
 
 app.use('/user', userinfo_routes)
 app.use('/city', CityRoutes)
-// app.use('/place', PlaceRoute)
+app.use('/place', PlaceRoute)
 app.use('/staticcontent', StaticContentRoute)
 
 app.use((err, req, res, next) => {

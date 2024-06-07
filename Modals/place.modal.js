@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const PlaceListConstants = require('../Constants/PlaceList');
 
 const place = new mongoose.Schema({
     place_name: String,
@@ -33,7 +34,10 @@ const place = new mongoose.Schema({
     ]
 
 },{
-    timestamps: true
+    timestamps: true,
+    collection:"places"
 })
 
-export const Place = mongoose.model('place',place)
+const PlaceModal = mongoose.model('place',place)
+
+module.exports = PlaceModal

@@ -5,4 +5,6 @@ const placeImage = new mongoose.Schema({
     timestamps: true,
 })
 
-export const PlaceImage = mongoose.model('placeImage', placeImage)
+const PlaceImage = mongoose.model('placeImage', placeImage)
+
+module.exports = PlaceImage

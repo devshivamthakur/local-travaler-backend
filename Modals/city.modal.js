@@ -13,6 +13,6 @@ const city = new mongoose.Schema({
 }
 )
 
-const cityModal = mongoose.model('ity',city)
+const cityModal = mongoose.model('City',city)
 
 module.exports = cityModal

@@ -7,8 +7,10 @@ const ConnectMongo=async ()=>{
     try {
      await mongoose.connect(`${mongoUrl}/${dbName}`,{
       writeConcern: { w: 'majority' },
+      dbName: dbName,  // Specify the database name here
+    
      })
-    //  console.log('Connected to',mongoose.connection)
+    //  console.log('Connected to',mongoose)
     } catch (error) {
       console.log(error)
       console.log("error")

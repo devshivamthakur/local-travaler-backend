@@ -69,8 +69,6 @@ const addCityFromDb = async (cityImage, cityName) => {
 };
 
 
-//city/pune.jpg
-
 module.exports = {
     getAllCities,
     addCity

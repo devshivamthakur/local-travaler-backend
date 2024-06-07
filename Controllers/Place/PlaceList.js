@@ -1,6 +1,10 @@
 const PlaceListConstants = require("../../Constants/PlaceList");
 const Joi = require('joi');
-const MongoDb = require("../../DB/MongoDb");
+const ApiError = require("../../middleware/Apierrors");
+const PlaceModal = require("../../Modals/place.modal");
+const mongoose = require("mongoose");
+const Favorite = require("../../Modals/favorite.modal");
+const Rating = require("../../Modals/rating.modal");
 
 const PLACETYPE = [
     PlaceListConstants.POPULAR_DESTINATION,
@@ -13,12 +17,12 @@ const PLACETYPE = [
     PlaceListConstants.BARS_AND_DRINKING
 ]
 
-const PlaceList = async (req, res) => {
+const PlaceList = async (req, res, next) => {
     const schema = Joi.object({
         placeType: Joi.string().valid(...PLACETYPE).required(),
         limit: Joi.number().default(10).max(100),
         offset: Joi.number().default(1).max(20),
-        city_id: Joi.number().required().min(1)
+        city_id: Joi.string().required().min(1)
 
 
     });
@@ -29,43 +33,28 @@ const PlaceList = async (req, res) => {
     try {
         const { error } = schema.validate({ placeType, limit, offset, city_id });
         if (error) {
-            return res.status(400).json({
-                message: 'Not able to find place list.',
-                error: error.details[0].message
-            });
+            throw new ApiError(400, error.details[0].message)
         }
         const Page = (offset - 1) * limit;
 
         let placeList = await getPlaceList(placeType, limit, Page, city_id);
-        if (!placeList) return res.json({
-            message: 'Not able to find place list.',
-            error: 'No Place Found',
-            placeList: []
-        });
 
         res.json({
             message: 'Place List Found Successfully.',
             placeList: placeList
         });
     } catch (error) {
-        console.log(error.message);
-        res.status(501).json({
-            message: 'Place List Error',
-            error: 'Place List Error'
-        });
+        next(error)
     }
 }
 
 const getPlaceList = async (placeType, limit, offset, city_id) => {
     try {
-        const db = await MongoDb.connect()
-
-
-        const result = await db.collection("place").aggregate(
+        const result = await PlaceModal.aggregate(
             [
                 {
                     $match: {
-                        city_id: city_id,
+                        city: new mongoose.Types.ObjectId(city_id),
 
                         ...placeType != PlaceListConstants.POPULAR_DESTINATION && {
                             place_category: placeType
@@ -81,93 +70,71 @@ const getPlaceList = async (placeType, limit, offset, city_id) => {
         )
             .skip(offset)
             .limit(Number(limit))
-            .toArray()
 
         return result;
 
 
     } catch (error) {
-        throw error
+        throw new ApiError(500, "Server Error")
 
     }
 
 }
 
 ///place info
-
-const PlaceInfo = async (req, res) => {
+const PlaceInfo = async (req, res, next) => {
     const schema = Joi.object({
-        place_id: Joi.number().required()
+        place_id: Joi.string().required()
     });
     const { place_id } = req.params;
 
     try {
         const { error } = schema.validate({ place_id });
         if (error) {
-            return res.status(400).json({
-                message: 'Not able to find place info.',
-                error: error.details[0].message
-            });
+            throw new ApiError(400, error.details[0].message)
+        }
+
+        const placeValidation = await validatePlaceId(place_id)
+        if(!placeValidation){
+            throw new ApiError(400, 'invalid place_id')
         }
 
         let placeInfo = await getPlaceInfo(place_id);
-        if (!placeInfo) return res.json({
-            message: 'Not able to find place info.',
-            error: 'No Place Found',
-            placeInfo: {}
-        });
 
         res.json({
             message: 'Place Info Found Successfully.',
             placeInfo: placeInfo
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'server error',
-            error: 'error'
-        });
+        next(error);
     }
 
 }
 
 const getPlaceInfo = async (place_id) => {
-    let db;
 
     try {
-         db = await MongoDb.connect();  // Get the client
 
-        const result = await db.collection('place').aggregate(
-            [
-                {
-                    $match: {
-                        place_id: Number(place_id)
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "placeimage",
-                        localField: "place_id",
-                        foreignField: "place_id",
-                        as: 'images'
-                    }
-                }
-            ]
-        ).toArray();
+        const result = await PlaceModal.findOne({
+            _id: new mongoose.Types.ObjectId(place_id)
+        })
+            .populate('city')
+            .populate('placeimage').lean()
 
-        return result[0] || {};
-    } catch (error) {
-        console.log(error);
-    } finally {
-        if (db) {
-            await db.close();  // Ensure the client is closed
+        if (result && result.city) {
+            result.city = result.city.city_name
         }
+        return result;
+    } catch (error) {
+        throw new ApiError(500, "Server Error")
+
     }
 };
 
-const PlaceInfoWithAuth = async (req, res) => {
+const PlaceInfoWithAuth = async (req, res, next) => {
     const schema = Joi.object({
-        userid: Joi.number().required(),
-        place_id: Joi.number().required()
+        userid: Joi.string().required(),
+        place_id: Joi.string().required()
     });
 
     const { userid } = req.user
@@ -175,18 +142,16 @@ const PlaceInfoWithAuth = async (req, res) => {
     try {
         const { error } = schema.validate({ userid, place_id });
         if (error) {
-            return res.status(400).json({
-                message: 'Not able to find place info.',
-                error: error.details[0].message
-            });
+            throw new ApiError(400, error.details[0].message)
+
+        }
+
+        const placeValidation = await validatePlaceId(place_id)
+        if(!placeValidation){
+            throw new ApiError(400, 'invalid place_id')
         }
 
         let placeInfo = await getPlaceInfoWithAuth(place_id, userid);
-        if (!placeInfo) return res.json({
-            message: 'Not able to find place info.',
-            error: 'No Place Found',
-            placeInfo: {}
-        });
 
         res.json({
             message: 'Place Info Found Successfully.',
@@ -194,50 +159,36 @@ const PlaceInfoWithAuth = async (req, res) => {
         });
 
     } catch (error) {
+        next(error);
 
     }
 
 }
 
+
 const getPlaceInfoWithAuth = async (place_id, userid) => {
-
-    let db;
-
     try {
-
-         db = await MongoDb.connect()
-        const result = await db.collection('place').aggregate([
-
+        const result = await PlaceModal.aggregate([
             {
                 $match: {
-                    place_id: Number(place_id)
+                    _id: new mongoose.Types.ObjectId(place_id)
                 }
             },
             {
                 $lookup: {
-                    from: "rating",
-                    let: {
-                        placeId: '$place_id'
-                    },
+                    from: "ratings",
+                    let: { placeId: "$_id" },
                     pipeline: [
                         {
-
                             $match: {
-
                                 $expr: {
                                     $and: [
-                                        {
-                                            $eq: ['$place_id', '$$placeId'],
-                                            $eq: ['$user_id', Number(userid)]
-
-                                        }
+                                        { $eq: ['$place', "$$placeId"] },
+                                        { $eq: ['$user', new mongoose.Types.ObjectId(userid)] }
                                     ]
                                 }
-
                             }
-
-                        }
-                        ,
+                        },
                         {
                             $project: {
                                 rating: 1,
@@ -246,13 +197,12 @@ const getPlaceInfoWithAuth = async (place_id, userid) => {
                         }
                     ],
                     as: "usersRating"
-
                 }
             },
             {
                 $unwind: {
                     path: '$usersRating',
-                    preserveNullAndEmptyArrays: true  // Equivalent to LEFT JOIN
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
@@ -262,67 +212,50 @@ const getPlaceInfoWithAuth = async (place_id, userid) => {
             },
             {
                 $lookup: {
-                    from: "placeimage",
-                    localField: "place_id",
-                    foreignField: "place_id",
-                    as: 'images'
-                }
-            }
-            ,
-            {
-                $lookup:{
-                    from:"favorite",
-                    pipeline:[
+                    from: "favorites",
+                    let: { placeId: "$_id" },
+                    pipeline: [
                         {
-                            $match:{
-                                $expr:{
-                                    $and:{
-                                        $eq:['place_id', Number(place_id)],
-                                        $eq:['user_id', Number(userid)]
-
-                                    }
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ['$place', "$$placeId"] },
+                                        { $eq: ['$user', new mongoose.Types.ObjectId(userid)] }
+                                    ]
                                 }
                             }
                         }
                     ],
-                    as :"favorites"
+                    as: "favorites"
                 }
             },
             {
-                $addFields:{
-                  is_fav:{
-                    $gt:[
-                        {
-                            $size:'$favorites'
-                        },
-                        0
-                    ]
-                  }  
-                }
-            },{
-                $project:{
-                    usersRating:0,
-                    favorites:0
+                $addFields: {
+                    is_fav: {
+                        $gt: [{ $size: '$favorites' }, 0]
+                    }
                 }
             },
-
-        ]).toArray()
+            {
+                $project: {
+                    usersRating: 0,
+                    favorites: 0
+                }
+            }
+        ]);
 
         return result[0] || {};
     } catch (error) {
-        console.log('error', error)
-        throw error
-
+        throw new ApiError(500, "Server Error");
     }
-    
-}
+};
 
 
 //update favorite
-const updateFavorite = async (req, res) => {
+const updateFavorite = async (req, res, next) => {
     const schema = Joi.object({
-        userid: Joi.number().required(),
-        place_id: Joi.number().required()
+        userid: Joi.string().required(),
+        place_id: Joi.string().required()
     });
 
     const { userid } = req.user
@@ -330,19 +263,17 @@ const updateFavorite = async (req, res) => {
     try {
         const { error } = schema.validate({ userid, place_id });
         if (error) {
-            return res.status(400).json({
-                message: 'Not able to update favorite.',
-                error: error.details[0].message
-            });
+            throw new ApiError(400, error.details[0].message)
+
+        }
+
+        const placeValidation = await validatePlaceId(place_id)
+        if(!placeValidation){
+            throw new ApiError(400, 'invalid place_id')
         }
 
         let placeInfo = await FavoriteActions(place_id, userid);
-        if (!placeInfo) return res
-            .status(400)
-            .json({
-                message: 'Not able to update favorite.',
-                error: 'No Place Found',
-            });
+        if (!placeInfo) throw new ApiError(401,"Not able to update favorite.")
 
         return res.json({
             message: 'Favorite Updated Successfully.',
@@ -350,45 +281,39 @@ const updateFavorite = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(501).json({
-            message: 'server error.',
-            error: 'Error updating favorite'
-        });
-
+        next(error);
     }
 
 }
 
 const FavoriteActions = async (place_id, userid) => {
     try {
-        const db = await MongoDb.connect()
 
-        const favorite = await db.collection('favorite').findOne({place_id: Number(place_id),user_id:userid})
-        if(favorite){
-            const deleteStatus = await db.collection('favorite').deleteOne({place_id: Number(place_id),user_id:userid});
+        const favorite = await Favorite.findOne({ place: new mongoose.Types.ObjectId(place_id), user: userid })
+        if (favorite) {
+            const deleteStatus = await Favorite.deleteOne({ place: new mongoose.Types.ObjectId(place_id), user: new mongoose.Types.ObjectId(userid) });
             return deleteStatus;
-
         }
 
-        const addFav = await db.collection('favorite').insertOne({
-            place_id: Number(place_id),
-            user_id:userid,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+        const addFav = await Favorite.create({
+            place: new mongoose.Types.ObjectId(place_id),
+            user: new mongoose.Types.ObjectId(userid),
         });
+
         return addFav;
 
     } catch (error) {
-        return false;
+        throw new ApiError(500, "Server Error")
+
 
     }
 
 }
 
 //visited place list 
-const VisitedPlaceList = async (req, res) => {
+const VisitedPlaceList = async (req, res, next) => {
     const schema = Joi.object({
-        userid: Joi.number().required(),
+        userid: Joi.string().required(),
         limit: Joi.number().default(10),
         offset: Joi.number().default(1),
     });
@@ -398,21 +323,12 @@ const VisitedPlaceList = async (req, res) => {
     try {
         const { error } = schema.validate({ userid, limit, offset });
         if (error) {
-            return res.status(400).json({
-                message: 'Not able to find visited place list.',
-                error: error.details[0].message
-            });
+            throw new ApiError(400, error.details[0].message)
+
         }
         const Page = (offset - 1) * limit;
 
         let placelists = await getVisitedPlaceList(userid, limit, Page);
-        if (!placelists) return res
-            .status(400)
-            .json({
-                message: 'Not able to find visited place list.',
-                error: 'No Place Found',
-                placelists: []
-            });
 
         return res.json({
             message: 'Visited Place List Found Successfully.',
@@ -420,10 +336,7 @@ const VisitedPlaceList = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(500).json({
-            message: 'server error',
-            error: 'Server error'
-        });
+       next(error);
 
     }
 
@@ -431,64 +344,70 @@ const VisitedPlaceList = async (req, res) => {
 
 const getVisitedPlaceList = async (userid, limit, offset) => {
     try {
-        userid = 6
-        console.log('Getting Visited Place List',userid, limit, offset)
-        
-        const db = await MongoDb.connect();
-        const results = await db.collection('rating').aggregate(
+
+        const results = await Rating.aggregate(
             [
                 {
-                    $match:{
-                        user_id:Number(userid)
+                    $match: {
+                        user: new mongoose.Types.ObjectId(userid),
                     }
                 },
                 {
-                    $lookup:{
-                        from:"place",
-                        localField:"place_id",
-                        foreignField:"place_id",
-                        as:"placeData"
+                    $lookup: {
+                        from: "places",
+                        localField: "place",
+                        foreignField: "_id",
+                        as: "placeData"
                     }
                 },
 
                 {
-                    $unwind:{
-                        path:"$placeData"
+                    $unwind: {
+                        path: "$placeData"
                     }
                 },
                 {
                     $replaceRoot: {
-                      newRoot: { $mergeObjects: ["$placeData", "$$ROOT"] } // Merge placeData fields with the root document
-                    }
-                  },
-                {
-                    $sort:{
-                        created_at:-1
+                        newRoot: { $mergeObjects: ["$placeData", "$$ROOT"] } // Merge placeData fields with the root document
                     }
                 },
                 {
-                    $project:{
-                        placeData:0,
-                        _id:0
+                    $sort: {
+                        created_at: -1
+                    }
+                },
+                {
+                    $project: {
+                        placeData: 0,
+                        _id: 0
                     }
                 }
             ]
-        ).limit(limit).skip(offset).toArray()
+        ).limit(limit).skip(offset)
 
         return results;
 
     } catch (error) {
-        console.log(error)
-        return false;
+        throw new ApiError(500, "Server Error")
+
 
     }
 
 }
+
+ const validatePlaceId = async(placeId) => {
+    if(typeof placeId !== "string") throw new ApiError(400, "Invalid place id")
+    const results = await PlaceModal.findOne({_id: new mongoose.Types.ObjectId(placeId)})
+    if(!results) return false;
+    return true
+}
+//
 
 module.exports = {
     PlaceList,
     PlaceInfo,
     PlaceInfoWithAuth,
     updateFavorite,
-    VisitedPlaceList
+    VisitedPlaceList,
+    validatePlaceId
 }
