@@ -1,0 +1,511 @@
+
+        /user/auth, POST, {"googleId":"1079339257dsf98ee1w1","email":"itsprodsfsddfgme@ga993.com","name":"shivadfwdsfdfdm "}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITIO, GET, {}, {"type":"TERMS_CONDITIO"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /staticcontent?type=TERMS_CONDITIO, GET, {}, {"type":"TERMS_CONDITIO"},
+        
+        /staticcontent?type=TERMS_CONDITION, GET, {}, {"type":"TERMS_CONDITION"},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune","city_image":""}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune","city_image":"city/pune.jpg"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune","city_image":"city/pune.jpg"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune","city_image":"city/pune.jpg"}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city, GET, {}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune","city_image":"city/pune.jpg"}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune","city_image":"city/pune.jpg"}, {},
+        
+        /place/visitedPlaceList, POST, {"limit":10,"offset":1}, {},
+        
+        /place/placelist, POST, {"placeType":"TEMPLE","limit":10,"offset":1,"city_id":1}, {},
+        
+        /place/placelist, POST, {"placeType":"TEMPLE","limit":10,"offset":1,"city_id":1}, {},
+        
+        /place/placelist, POST, {"placeType":"TEMPLE","limit":10,"offset":1,"city_id":1}, {},
+        
+        /place/placelist, POST, {"placeType":"TEMPLE","limit":10,"offset":1,"city_id":1}, {},
+        
+        /city/addCity, POST, {"city_name":"Pune","city_image":"city/pune.jpg"}, {},
+        
+        /city, GET, {}, {},
+        
+        /place/placelist, POST, {"placeType":"TEMPLE","limit":10,"offset":1,"city_id":1}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":1}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":1}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","place_type":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","place_type":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","place_type":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","place_type":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEM1PLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEM1PLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placeinfo/6660908cca8c25d7293d5016, GET, {}, {},
+        
+        /place/placeinfo/6660908cca8c25d7293d5016, GET, {}, {},
+        
+        /place/placeinfo/6660908cca8c25d7293d5016, GET, {}, {},
+        
+        /place/placeinfo/6660908cca8c25d7293d5016, GET, {}, {},
+        
+        /place/placeinfo/6660908cca8c25d7293d5016, GET, {}, {},
+        
+        /place/placeinfo/6660908cca8c25d7293d5016, GET, {}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placeinfo/6660908cca8c25d7293d5016, GET, {}, {},
+        
+        /place/placeinfo/665d4886159e560e7f9ab910, GET, {}, {},
+        
+        /place/placeinfo/6661da2317dff750f042073e, GET, {}, {},
+        
+        /place/placeinfo/6661da2317dff750f042073e, GET, {}, {},
+        
+        /place/placeinfo/6661da2317dff750f042073e, GET, {}, {},
+        
+        /place/placeinfo/6661da2317dff750f042073e, GET, {}, {},
+        
+        /place/placeinfo/6661da2317dff750f042073e, GET, {}, {},
+        
+        /place/placeinfo/6661da2317dff750f042073e, GET, {}, {},
+        
+        /place/placeinfo/6661da2317dff750f042073e, GET, {}, {},
+        
+        /place/placeinfo/6661da2317dff750f042073e, GET, {}, {},
+        
+        /place/placeinfo/6661da2317dff750f042073e, GET, {}, {},
+        
+        /place/placeinfo/6661da2317dff750f042073e, GET, {}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"665d4886159e560e7f9ab910","placeType":"TEMPLE"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placeinfo/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfo/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/updateFavorite, POST, {"place_id":1}, {},
+        
+        /place/updateFavorite, POST, {"place_id":1}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /user/userinfo, GET, {}, {},
+        
+        /user/auth, POST, {"googleId":"1079339257dsf98ee1w1","email":"itsprodsfsddfgme@ga993.com","name":"shivadfwdsfdfdm "}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/updateFavorite, POST, {"place_id":"6661dc50016c492dc6174af2"}, {},
+        
+        /place/submitRating, POST, {"place_id":1,"rating":1}, {},
+        
+        /place/placeinfo/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /user/auth, POST, {"googleId":"1079339257dsf98ee1w1","email":"itsprodsfsddfgme@ga993.com","name":"shivadfwdsfdfdm "}, {},
+        
+        /place/submitRating, POST, {"place_id":1,"rating":1}, {},
+        
+        /place/submitRating, POST, {"place_id":"6661dc50016c492dc6174af2","rating":1}, {},
+        
+        /place/visitedPlaceList, POST, {}, {},
+        
+        /place/visitedPlaceList, POST, {}, {},
+        
+        /place/visitedPlaceList, POST, {}, {},
+        
+        /place/visitedPlaceList, POST, {}, {},
+        
+        /place/visitedPlaceList, POST, {}, {},
+        
+        /place/visitedPlaceList, POST, {}, {},
+        
+        /place/visitedPlaceList, POST, {}, {},
+        
+        /place/placeinfoAuth/1, GET, {}, {},
+        
+        /place/placeinfoAuth/1, GET, {}, {},
+        
+        /place/placeinfoAuth/1, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174af2, GET, {}, {},
+        
+        /place/placelist, POST, {"limit":10,"offset":1,"city_id":"6660905bd913f0ac328b1d4d","placeType":"TEMPLE"}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174aee, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174aee, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174aee, GET, {}, {},
+        
+        /place/placeinfoAuth/6661dc50016c492dc6174aee, GET, {}, {},
+        
+        /place/visitedPlaceList, POST, {}, {},
+        
+        /place/visitedPlaceList, POST, {}, {},
+        
+        /place/visitedPlaceList, POST, {}, {},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=1, DELETE, {}, {"place_id":"1"},
+        
+        /place/deleteFavPlace?place_id=6661e5616ec277c13f50a9ac, DELETE, {}, {"place_id":"6661e5616ec277c13f50a9ac"},
+        
+        /place/deleteFavPlace?place_id=6661e5616ec277c13f50a9ac, DELETE, {}, {"place_id":"6661e5616ec277c13f50a9ac"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/favplaces?limit=10&offset=1, GET, {}, {"limit":"10","offset":"1"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
+        /place/deleteFavPlace?place_id=6661dc50016c492dc6174af2, DELETE, {}, {"place_id":"6661dc50016c492dc6174af2"},
+        
